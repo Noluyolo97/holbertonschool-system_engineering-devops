@@ -37,4 +37,4 @@ if __name__ == "__main__":
         for todo in jsonTodo:
             TASK_TITLE = todo.get('title')
             if todo.get("completed"):
-                print("\t {}".format(TASK_TITLE)
+                print("\t {}".format(TASK_TITLE))
