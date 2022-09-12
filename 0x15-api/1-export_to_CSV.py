@@ -27,4 +27,3 @@ if __name__ == "__main__":
                                     format(employeeName), "{}".
                                     format(task.get('completed')),
                                     "{}".format(task.get('title'))])
-            
