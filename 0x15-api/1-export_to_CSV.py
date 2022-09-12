@@ -1,30 +1,30 @@
 #!/usr/bin/python3
-""" Queries REST API for employee info, exports to CSV
-    "USER_ID","USERNAME","TASK_COMPLETED_STATUS","TASK_TITLE"
-    argv 1 = int employee ID
-"""
+"""Program that Gather data from an API and export it to CSV"""
+import csv
+import requests
+from sys import argv
+
 if __name__ == "__main__":
-    import csv
-    import requests as r
-    from sys import argv
+    """ Program Entry point """
+    employeeId = argv[1]
+    todoUrl = 'https://jsonplaceholder.typicode.com/todos'
+    userUrl = 'https://jsonplaceholder.typicode.com/users'
+    payload1 = {'userId': employeeId}
+    payload2 = {'id': employeeId}
 
-    user_id = argv[1]
-    # Finds employee username by "id" param in /users/
-    name_q = r.get("https://jsonplaceholder.typicode.com/users/{}/"
-                   .format(user_id))
-    data = name_q.json()
-    username = data.get("username")
+    todoRequest = requests.get(todoUrl, params=payload1)
+    userRequest = requests.get(userUrl, params=payload2)
 
-    # Finds employee tasks by "userID" param; /users/ & /todo/ are linked
-    url = "https://jsonplaceholder.typicode.com/users/1/todos/"
-    task_q = r.get(url, params={'userId': user_id})
-    data = task_q.json()
+    totalTasks = todoRequest.json()
+    userData = userRequest.json()
+    employeeName = userData[0].get('username')
 
-    # Creates csv file, writes request data into it row by row
-
-    with open('{}.csv'.format(user_id), 'w', newline='') as csvfile:
-        csv_data = csv.writer(csvfile, delimiter=',', quotechar='"',
-                              quoting=csv.QUOTE_ALL)
-        for elem in data:
-            csv_data.writerow([elem["userId"], username,
-                               elem["completed"], elem["title"]])
+    with open('{}.csv'.format(employeeId), mode='w') as employee_file:
+        employeeWriter = csv.writer(employee_file, delimiter=',',
+                                    quotechar='"', quoting=csv.QUOTE_ALL)
+        for task in totalTasks:
+            employeeWriter.writerow(["{}".format(employeeId), "{}".
+                                    format(employeeName), "{}".
+                                    format(task.get('completed')),
+                                    "{}".format(task.get('title'))])
+            
